@@ -347,10 +347,7 @@ CREATE TABLE review_logs (
     log_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Complex Query 1 Created by Leena Hussein: Borrowing Summary Per User
--- This query lists all users, including those who haven’t borrowed any books (because of LEFT JOIN).
--- It calculates the total number of books each user has borrowed and the most recent borrow date.
--- Users are sorted so that those with the most recent borrow activity appear first.
+-- Complex Query 1: Borrowing Summary Per User
 SELECT 
     u.User_Id,
     u.First_Name,
@@ -365,10 +362,7 @@ GROUP BY
     u.User_Id, u.First_Name, u.Last_Name, u.Email, u.Membership_Date
 ORDER BY Last_Borrowed_Date DESC;
 
--- Complex Query 2 Created by Leena: Active Users with Pending Reservations and Total Fines
--- Shows only users with at least one pending reservation.
--- Also calculates total fines and flags if any fine is unpaid.
--- Users are sorted by their total fines in descending order.
+-- Complex Query 2: Active Users with Pending Reservations and Total Fines
 SELECT 
     u.User_Id,
     u.First_Name,
@@ -387,36 +381,63 @@ HAVING Pending_Reservations > 0
 ORDER BY Total_Fines DESC;
 
 -- Complex Query 3: Retrieve all transactions with user and staff details
-SELECT Transactions.Transaction_ID, Transactions.Transaction_Date, Users.User_ID, Staff.Staff_ID, Transactions.Transaction_id, Book_Copies.copy_id, Genres.genre_id
-FROM Transactions
-JOIN Users ON Transactions.User_ID = Users.User_ID
-JOIN Staff ON Transactions.Staff_ID = Staff.Staff_ID
-LEFT JOIN Book_Copies ON Transactions.Book_ID = Book_Copies.Book_ID
-LEFT JOIN Genres ON Book_Copies.Genre_ID = Genres.Genre_ID;
+SELECT 
+    t.transaction_id, 
+    t.transaction_date, 
+    u.user_id, 
+    s.staff_id, 
+    bc.copy_id, 
+    g.genre_id, 
+    g.genre_name
+FROM 
+    transactions t
+JOIN users u ON t.user_id = u.user_id
+JOIN staff s ON t.staff_id = s.staff_id
+LEFT JOIN borrowing_history bh ON t.borrow_id = bh.borrow_id
+LEFT JOIN book_copies bc ON bh.book_id = bc.book_id
+LEFT JOIN books b ON bc.book_id = b.book_id
+LEFT JOIN genres g ON b.genre_id = g.genre_id;
 
 -- Complex Query 4: List all book copies along with their genres and publishers
-SELECT Book_Copies.Copy_ID, Book_Copies.Copy_Number, Book_Copies.Title, Book_Copies.Author_Name, Genre_Categories.Genre_Title, Publishers.Publisher_ID
-FROM Book_Copies
-JOIN Genre_Categories ON Book_Copies.Genre_ID = Genre_Categories.Genre_ID
-JOIN Publishers ON Book_Copies.Publisher_ID = Publishers.Publisher_Id;
+SELECT 
+    bc.copy_id,
+    b.title AS book_title,
+    b.author_id,
+    g.genre_name,
+    p.publisher_name
+FROM 
+    book_copies bc
+JOIN books b ON bc.book_id = b.book_id
+JOIN genres g ON b.genre_id = g.genre_id
+JOIN publishers p ON b.publisher_id = p.publisher_id;
 
 -- Complex Query 5
 -- Created by Aayan Khan/This SQL query retrieves reservation details, including user information, book title, reservation date, status,
 -- and the total number of reservations per user. 
 -- It uses joins, a subquery, filtering, and sorting to efficiently fetch and structure the data.
  
-SELECT r.Reservation_Id, u.First_Name, u.Last_Name, u.Email, 
-       b.Title AS Book_Title, r.Reservation_Date, r.Reservation_Status, 
-       ur.Total_User_Reservations
-FROM reservations r
-JOIN users u ON r.User_Id = u.User_Id
-JOIN books b ON r.Book_Id = b.Book_Id
-JOIN (SELECT User_Id, COUNT(*) AS Total_User_Reservations 
-
-      FROM reservations GROUP BY User_Id) ur 
-ON r.User_Id = ur.User_Id
-WHERE r.Reservation_Status IN ('Pending', 'Completed')
-ORDER BY r.Reservation_Date DESC;
+SELECT 
+    r.reservation_id, 
+    u.first_name, 
+    u.last_name, 
+    u.email, 
+    b.title AS book_title, 
+    r.reservation_date, 
+    r.status AS reservation_status, 
+    ur.total_user_reservations
+FROM 
+    reservations r
+JOIN users u ON r.user_id = u.user_id
+JOIN books b ON r.book_id = b.book_id
+JOIN (
+    SELECT user_id, COUNT(*) AS total_user_reservations 
+    FROM reservations 
+    GROUP BY user_id
+) ur ON r.user_id = ur.user_id
+WHERE 
+    r.status IN ('Pending', 'Completed')
+ORDER BY 
+    r.reservation_date DESC;
 
 -- Complex Query 6
 -- Created by Aayan Khan/ This query retrieves each user's book request history, including the total requests, pending requests, approved requests, rejected requests, 
@@ -427,9 +448,9 @@ SELECT
     u.First_Name,
     u.Last_Name,
     COUNT(br.Request_Id) AS Total_Requests,
-    SUM(CASE WHEN br.Request_Status = 'Pending' THEN 1 ELSE 0 END) AS Pending_Requests,
-    SUM(CASE WHEN br.Request_Status = 'Approved' THEN 1 ELSE 0 END) AS Approved_Requests,
-    SUM(CASE WHEN br.Request_Status = 'Rejected' THEN 1 ELSE 0 END) AS Rejected_Requests,
+    SUM(CASE WHEN br.status = 'Pending' THEN 1 ELSE 0 END) AS Pending_Requests,
+    SUM(CASE WHEN br.status = 'Approved' THEN 1 ELSE 0 END) AS Approved_Requests,
+    SUM(CASE WHEN br.status = 'Rejected' THEN 1 ELSE 0 END) AS Rejected_Requests,
     MAX(br.Request_Date) AS Request_Date
 FROM book_requests br
 JOIN users u ON br.User_Id = u.User_Id
@@ -466,7 +487,7 @@ LIMIT 10;
 
 SELECT b.title, MIN(r.rating) AS lowest_rating
 FROM books b
-JOIN library_reviews r ON b.book_id = r.book_id
+JOIN book_reviews r ON b.book_id = r.book_id
 GROUP BY b.book_id
 HAVING lowest_rating >= 4;
 
@@ -474,24 +495,57 @@ HAVING lowest_rating >= 4;
 
 SELECT b.title, AVG(lf.rating) AS avg_feedback_rating
 FROM books b
-JOIN library_feedback lf ON b.book_id = lf.book_id
+JOIN book_reviews lf ON b.book_id = lf.book_id
 GROUP BY b.book_id
 ORDER BY avg_feedback_rating DESC
 LIMIT 1;
 
 -- Created by Leena
--- This procedure allows you to add a new record to the borrowing_history table by supplying the user ID, book ID, and borrow date.
--- Useful for encapsulating business logic and reducing repetitive insert code.
 DELIMITER //
 
-CREATE PROCEDURE AddBorrowingRecord (
-    IN p_userId INT,
-    IN p_bookId INT,
-    IN p_borrowDate DATE
+CREATE PROCEDURE IssueBook(
+    IN p_user_id INT,
+    IN p_book_id INT,
+    IN p_staff_id INT,
+    IN p_due_date DATE
 )
 BEGIN
-    INSERT INTO borrowing_history (User_Id, Book_Id, Borrow_Date)
-    VALUES (p_userId, p_bookId, p_borrowDate);
+    INSERT INTO borrowing_history (user_id, book_id, staff_id, borrow_date, due_date, book_status)
+    VALUES (p_user_id, p_book_id, p_staff_id, CURRENT_DATE(), p_due_date, 'Borrowed');
+
+    UPDATE books
+    SET available_copies = available_copies - 1
+    WHERE book_id = p_book_id AND available_copies > 0;
+END //
+
+DELIMITER ;
+
+-- 
+DELIMITER //
+
+CREATE PROCEDURE ReturnBook(
+    IN p_borrow_id INT
+)
+BEGIN
+    UPDATE borrowing_history
+    SET return_date = CURRENT_DATE(),
+        book_status = 'Returned'
+    WHERE borrow_id = p_borrow_id;
+END //
+
+DELIMITER ;
+
+-- 
+DELIMITER //
+
+CREATE PROCEDURE PayFine(
+    IN p_fine_id INT
+)
+BEGIN
+    UPDATE fines
+    SET status = 'Paid',
+        payment_date = CURRENT_DATE()
+    WHERE fine_id = p_fine_id;
 END //
 
 DELIMITER ;
@@ -725,14 +779,12 @@ SELECT GetUserOverdueCount(1) AS OverdueBooks;
 -- It ensures consistency between the fine_amount and status fields.
 DELIMITER //
 
-CREATE TRIGGER UpdateFineStatus
-AFTER UPDATE ON fines
+CREATE TRIGGER update_fine_status
+BEFORE UPDATE ON fines
 FOR EACH ROW
 BEGIN
     IF NEW.fine_amount <= 0 AND NEW.status != 'Paid' THEN
-        UPDATE fines
-        SET status = 'Paid'
-        WHERE fine_id = NEW.fine_id;
+        SET NEW.status = 'Paid';
     END IF;
 END //
 
@@ -746,7 +798,7 @@ DELIMITER ;
 -- Action: Insert a record into fines with calculated fine amount.
 DELIMITER $$
 
-CREATE TRIGGER AddFineOnLateReturn
+CREATE TRIGGER add_fine_on_late_return
 AFTER UPDATE ON borrowing_history
 FOR EACH ROW
 BEGIN
@@ -769,7 +821,7 @@ DELIMITER ;
 -- Created by
 DELIMITER //
 
-CREATE TRIGGER RestoreStock
+CREATE TRIGGER after_return_book_restore_stock
 AFTER UPDATE ON borrowing_history
 FOR EACH ROW
 BEGIN
@@ -787,12 +839,25 @@ DELIMITER ;
 -- Created by 
 DELIMITER //
 
-CREATE TRIGGER AfterReviewInsert
+CREATE TRIGGER after_review_insert
 AFTER INSERT ON book_reviews
 FOR EACH ROW
 BEGIN
     INSERT INTO review_logs (review_id, log_action)
     VALUES (NEW.review_id, 'Review Added');
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER after_issue_book_reduce_stock
+AFTER INSERT ON borrowing_history
+FOR EACH ROW
+BEGIN
+    UPDATE books
+    SET available_copies = available_copies - 1
+    WHERE book_id = NEW.book_id;
 END //
 
 DELIMITER ;
