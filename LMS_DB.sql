@@ -5,6 +5,7 @@ use LibraryManagementSystem_Test;
 -- use LibraryManagementSystem;
 
 -- Created by Soumya Khanna
+-- Table to store information about book authors
 CREATE TABLE authors (
 	author_id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
@@ -24,9 +25,14 @@ VALUES
 (9, 'Mark Twain', 'American writer, humorist, entrepreneur, and lecturer, known for "The Adventures of Tom Sawyer".'),
 (10, 'Agatha Christie', 'British writer known for her 66 detective novels and 14 short story collections.'),
 (11, 'F. Scott Fitzgerald', 'American novelist famous for "The Great Gatsby".'),
-(12, 'Ernest Hemingway', 'American journalist, novelist, and short-story writer, Nobel Prize laureate.');
+(12, 'Ernest Hemingway', 'American journalist, novelist, and short-story writer, Nobel Prize laureate.'),
+(13, 'Colleen Hoover', 'American author known for romance novels'),
+(14, 'George Orwell', 'English novelist, essayist, and critic'),
+(15, 'Khaled Hosseini', 'Afghan-born American novelist and physician'),
+(16, 'John Green', 'American author known for young adult fiction');
 
--- Created by Leena (add inline comments) 
+-- Created by Leena
+--  
 CREATE TABLE publishers (
     publisher_id INT AUTO_INCREMENT PRIMARY KEY,
     publisher_name VARCHAR(255) NOT NULL,
@@ -42,7 +48,8 @@ INSERT INTO publishers (publisher_id, publisher_name, email, website) VALUES
 ('5', 'Bloomsbury', 'info@bloomsbury.com', 'https://www.bloomsbury.com'),
 ('6', 'Disney Hyperion', 'contact@disneybooks.com', 'https://www.disneybooks.com');
 
--- Created by Senan (add inline comment) 
+-- Created by Senan
+-- 
 CREATE TABLE genres (
     genre_id INT AUTO_INCREMENT PRIMARY KEY,
     genre_name VARCHAR(100) NOT NULL
@@ -72,9 +79,6 @@ CREATE TABLE books (
 	FOREIGN KEY (genre_id) REFERENCES genres (genre_id)
 );
 
-ALTER TABLE books 
-MODIFY Title VARCHAR(100) DEFAULT NULL;
-
 INSERT INTO books (book_id, title, author_id, publisher_id, edition, genre_id, total_copies, available_copies)
 VALUES 
 (1, 'The Alchemist', 1, 1, 3, 2, 5, 3),
@@ -92,9 +96,14 @@ VALUES
 (13, 'The Sea of Monsters', 6, 6, 1, 4, 6, 6),
 (14, 'The Titan''s Curse', 6, 6, 1, 4, 6, 6),
 (15, 'The Battle of the Labyrinth', 6, 6, 1, 4, 6, 6),
-(16, 'The Last Olympian', 6, 6, 1, 4, 6, 6);
+(16, 'The Last Olympian', 6, 6, 1, 4, 6, 6),
+(17, 'It Ends with Us', 7, 7, 1, 1, 4, 4),
+(18, '1984', 8, 8, 1, 3, 5, 5),
+(19, 'The Kite Runner', 9, 9, 2, 2, 3, 2),
+(20, 'The Fault in Our Stars', 10, 10, 1, 1, 6, 6);
 
--- Created by Leena (add inline comments) 
+-- Created by Leena
+-- 
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -114,6 +123,7 @@ VALUES
 ('3', 'Melissa', 'Tandon', 'm.tandon@example.com', '0922334355', '12 St, Blacksburg, Virginia', 'Student');
 
 -- Created by Aayan Khan 
+-- 
 CREATE TABLE staff (
     staff_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -131,7 +141,8 @@ VALUES
 ('Charlie', 'Davis', 'charlie.davis@example.com', 'Manager', '345-678-9012'),
 ('David', 'White', 'david.white@example.com', 'Librarian', '456-789-0123');
 
--- Created by Leena (add inline comments) 
+-- Created by Leena 
+-- 
 CREATE TABLE borrowing_history (
     borrow_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -165,9 +176,10 @@ VALUES
 (15, 2, 15, 1, '2025-02-22', '2025-03-01', NULL, 'Overdue'),
 (16, 3, 16, 1, '2025-03-03', '2025-03-13', NULL, 'Borrowed');
 
-SELECT * FROM borrowing_history;
+-- SELECT * FROM borrowing_history;
 
--- Created by Rishika (add inline comments) 
+-- Created by Rishika
+--  
 CREATE TABLE fines (
     fine_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -187,6 +199,7 @@ VALUES
 -- SELECT * FROM genres;
 
 -- Created by Aayan Khan 
+-- 
   CREATE TABLE reservations (
     reservation_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -202,7 +215,8 @@ VALUES
 (1, 1, '2024-03-01', 'Pending'),
 (2, 2, '2024-03-02', 'Completed');
 
--- Created by Soumya (add inline comment) 
+-- Created by Soumya Khanna
+-- Table to store digital materials like eBooks, PDFs, and audiobooks
 CREATE TABLE digital_resources (
     resource_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -228,9 +242,14 @@ VALUES
 (13, 'The Sea of Monsters (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy2-pdf'),
 (14, 'The Titan''s Curse (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy3-pdf'),
 (15, 'The Battle of the Labyrinth (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy4-pdf'),
-(16, 'The Last Olympian (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy5-pdf');
+(16, 'The Last Olympian (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy5-pdf'),
+(17, 'It Ends with Us (eBook)', 7, 7, 1, 'https://library.com/resources/itendswithus-ebook', 'Online'),
+(18, '1984 (PDF)', 8, 8, 3, 'https://library.com/resources/1984-pdf', 'Downloadable'),
+(19, 'The Kite Runner (Audiobook)', 9, 9, 2, 'https://library.com/resources/kiterunner-audio', 'Online'),
+(20, 'The Fault in Our Stars (ePub)', 10, 10, 1, 'https://library.com/resources/fault-stars-epub', 'Online');
 
 -- Created by Senan 
+-- 
 CREATE TABLE transactions (
   transaction_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   transaction_date DATE NOT NULL,
@@ -264,7 +283,8 @@ VALUES
 ('2025-02-22', 2, 1, 15, 14),
 ('2025-03-03', 3, 2, 16, 14);
 
--- Created by Senan (add inline comments)
+-- Created by Senan
+-- 
 CREATE TABLE book_copies (
     copy_id INT AUTO_INCREMENT PRIMARY KEY,
     book_id INT NOT NULL,
@@ -294,6 +314,7 @@ VALUES
 (16, 'Shelf D3', 'BC0016', 'Available');
 
 -- Created by Aayan Khan  
+-- 
 CREATE TABLE book_requests (
     request_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -309,7 +330,8 @@ VALUES
 (1, 'The Catcher in the Rye', 'J.D. Salinger', '2024-03-01', 'Pending'),
 (2, 'To Kill a Mockingbird', 'Harper Lee', '2024-03-02', 'Approved');
 
--- Created by Rishika (add inline comments) 
+-- Created by Rishika
+-- 
 CREATE TABLE book_reviews (
     review_id INT AUTO_INCREMENT PRIMARY KEY,
     book_id INT NOT NULL,
@@ -326,7 +348,8 @@ VALUES
     (1, 1, 'Great book! Highly recommend it to anyone interested in history.', 5),
     (2, 2, 'The plot was a bit slow, but the characters were well-developed.', 4);
   
--- Created by Rishika (add inline comments) 
+-- Created by Rishika 
+-- 
 CREATE TABLE library_feedback (
     feedback_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -341,6 +364,7 @@ VALUES
 (2, 'The library had a good collection, but finding specific resources could be made easier.');
 
 -- Created by  
+-- 
 CREATE TABLE review_logs (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
     review_id INT,
@@ -461,7 +485,9 @@ JOIN users u ON br.User_Id = u.User_Id
 GROUP BY u.User_Id, u.First_Name, u.Last_Name
 HAVING COUNT(br.Request_Id) > 0;
 
--- Complex Query 7 Created by Soumya: Find overdue books 
+-- Complex Query 7 
+-- Created by Soumya: This query finds all books that are overdue (past due date and not yet returned)
+-- This helps to keep track of the users with overdue books to send notifications/reminders
 
 SELECT 
 	b.book_id, 
@@ -474,7 +500,9 @@ JOIN books b ON br.book_id = b.book_id
 JOIN users u ON br.user_id = u.user_id
 WHERE br.return_date IS NULL AND br.due_date < CURRENT_DATE;
 
--- Complex Query 8 Created by Soumya: Find the most borrowed books
+-- Complex Query 8 
+-- Created by Soumya: This query finds the top 10 most borrowed books
+-- This helps to keep track of inventory and plan for future borrowing
 
 SELECT 
 	b.book_id, 
@@ -505,6 +533,9 @@ ORDER BY avg_feedback_rating DESC
 LIMIT 1;
 
 -- Created by Leena
+-- This procedure allows you to add a new record to the borrowing_history table by supplying the user ID, book ID, and borrow date.
+-- Useful for encapsulating business logic and reducing repetitive insert code.
+
 DELIMITER //
 
 CREATE PROCEDURE IssueBook(
@@ -529,7 +560,8 @@ CALL IssueBook(1, 3, 1, "2025-03-15");
 SELECT * FROM borrowing_history;
 SELECT * FROM books;
 
--- Created by
+-- Created by Soumya 
+
 -- DROP PROCEDURE ReturnBook;
 
 DELIMITER //
@@ -635,6 +667,9 @@ END //
 DELIMITER;
 
 -- Created by Leena
+-- This function calculates the total amount of fines for a given user.
+-- Returns 0.00 if the user has no fines (IFNULL handles that case).
+
 DELIMITER //
 
 CREATE FUNCTION GetTotalFines(userId INT)
@@ -653,7 +688,8 @@ END //
 
 DELIMITER;
 
--- Stored Function to find most transacted item (Created by Senan)
+-- Created by Senan
+-- Stored Function to find most transacted item
 DELIMITER $$
 
 CREATE FUNCTION GetMostTransactedBook()
@@ -805,6 +841,7 @@ SELECT GetUserOverdueCount(1) AS OverdueBooks;
 -- Created by Leena
 -- This trigger automatically updates the status of a fine to 'Paid' if its amount is reduced to 0 or less after an update. 
 -- It ensures consistency between the fine_amount and status fields.
+
 DELIMITER //
 
 CREATE TRIGGER update_fine_status
@@ -877,7 +914,7 @@ END //
 
 DELIMITER ;
 
--- 
+-- Created by 
 DELIMITER //
 
 CREATE TRIGGER after_issue_book_reduce_stock
