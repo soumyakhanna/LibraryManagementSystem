@@ -1,0 +1,788 @@
+DROP DATABASE IF EXISTS `LibraryManagementSystem`;
+
+CREATE database LibraryManagementSystem;
+use LibraryManagementSystem;
+
+-- Created by Soumya Khanna
+CREATE TABLE authors (
+	author_id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(100) NOT NULL,
+    bio VARCHAR(255)
+);
+
+INSERT INTO authors (author_id, name, bio)
+VALUES 
+(1, 'Paulo Coelho', 'Brazilian novelist best known for "The Alchemist".'), 
+(2, 'Harper Lee', 'American novelist famous for "To Kill a Mockingbird".'),
+(3, 'Alex Michaelides', 'British-Cypriot author and screenwriter known for "The Silent Patient".'),
+(4, 'Gillian Flynn', 'American author and former television critic, known for "Gone Girl".'),
+(5, 'J.K. Rowling', 'British author renowned for the Harry Potter series.'),
+(6, 'Rick Riordan', 'American author best known for mythology-based fiction like "Percy Jackson".'),
+(7, 'George Orwell', 'British novelist, essayist, and critic famous for "1984" and "Animal Farm".'),
+(8, 'Jane Austen', 'English novelist known primarily for her six major novels like "Pride and Prejudice".'),
+(9, 'Mark Twain', 'American writer, humorist, entrepreneur, and lecturer, known for "The Adventures of Tom Sawyer".'),
+(10, 'Agatha Christie', 'British writer known for her 66 detective novels and 14 short story collections.'),
+(11, 'F. Scott Fitzgerald', 'American novelist famous for "The Great Gatsby".'),
+(12, 'Ernest Hemingway', 'American journalist, novelist, and short-story writer, Nobel Prize laureate.');
+
+-- Created by Leena (add inline comments) 
+CREATE TABLE publishers (
+    publisher_id INT AUTO_INCREMENT PRIMARY KEY,
+    publisher_name VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    website VARCHAR(255)
+);
+
+INSERT INTO publishers (publisher_id, publisher_name, email, website) VALUES 
+('1', 'HarperOne', 'contact@harperone.com', 'https://www.harperone.com'),
+('2', 'Health Communications, Inc.', 'info@hci.com', 'https://www.hcibooks.com'),
+('3', 'Celadon Books', 'info@celadonbooks.com', 'https://celadonbooks.com'),
+('4', 'Crown Publishing Group', 'contact@crownpublishing.com', 'https://crownpublishing.com'),
+('5', 'Bloomsbury', 'info@bloomsbury.com', 'https://www.bloomsbury.com'),
+('6', 'Disney Hyperion', 'contact@disneybooks.com', 'https://www.disneybooks.com');
+
+-- Senan (add inline comment) 
+CREATE TABLE genres (
+    genre_id INT AUTO_INCREMENT PRIMARY KEY,
+    genre_name VARCHAR(100) NOT NULL
+);
+
+INSERT INTO genres (genre_name) VALUES
+('Crime'),
+('Thriller'),
+('Biography'),
+('Fantasy');
+
+-- Created by Soumya Khanna
+-- Table to store book details including title, author, publisher, genre, and inventory counts.
+CREATE TABLE books (
+	book_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author_id INT,
+    publisher_id INT,
+    edition INT,
+    genre_id INT,
+    isbn VARCHAR(20) UNIQUE,
+    publication_year YEAR,
+    total_copies INT DEFAULT 1,
+    available_copies INT DEFAULT 1,
+    FOREIGN KEY (author_id) REFERENCES authors(author_id),
+    FOREIGN KEY (publisher_id) REFERENCES publishers(publisher_id),
+	FOREIGN KEY (genre_id) REFERENCES genres (genre_id)
+);
+
+ALTER TABLE books 
+MODIFY Title VARCHAR(100) DEFAULT NULL;
+
+INSERT INTO books (book_id, title, author_id, publisher_id, edition, genre_id, total_copies, available_copies)
+VALUES 
+(1, 'The Alchemist', 1, 1, 3, 2, 5, 3),
+(2, 'Chicken Soup for the Teenage Soul', 2, 2, 2, 1, 4, 4),
+(3, 'The Silent Patient', 3, 3, 1, 2, 5, 5),
+(4, 'Gone Girl', 4, 4, 1, 2, 3, 3),
+(5, 'Harry Potter and the Philosopher''s Stone', 5, 5, 2, 4, 6, 6),
+(6, 'Harry Potter and the Chamber of Secrets', 5, 5, 2, 4, 6, 6),
+(7, 'Harry Potter and the Prisoner of Azkaban', 5, 5, 2, 4, 6, 6),
+(8, 'Harry Potter and the Goblet of Fire', 5, 5, 2, 4, 6, 6),
+(9, 'Harry Potter and the Order of the Phoenix', 5, 5, 2, 4, 6, 6),
+(10, 'Harry Potter and the Half-Blood Prince', 5, 5, 2, 4, 6, 6),
+(11, 'Harry Potter and the Deathly Hallows', 5, 5, 2, 4, 6, 6),
+(12, 'The Lightning Thief', 6, 6, 1, 4, 6, 6),
+(13, 'The Sea of Monsters', 6, 6, 1, 4, 6, 6),
+(14, 'The Titan''s Curse', 6, 6, 1, 4, 6, 6),
+(15, 'The Battle of the Labyrinth', 6, 6, 1, 4, 6, 6),
+(16, 'The Last Olympian', 6, 6, 1, 4, 6, 6);
+
+-- Created by Leena (add inline comments) 
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone_number VARCHAR(20) UNIQUE,
+    address TEXT,
+    membership_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_type VARCHAR(20) NOT NULL -- student, faculty, staff, etc.
+);
+
+INSERT INTO users 
+(user_id, first_name, last_name, email, phone_number, address, user_type) 
+VALUES 
+('1', 'Liya', 'Alemu', 'liya.alemu@example.com', '0911223344', '123 Addis Ababa, Ethiopia', 'Student'),
+('2', 'Daniel', 'Tesfaye', 'daniel.tesfaye@example.com', '0922334455', '456 Bahir Dar, Ethiopia', 'Faculty'),
+('3', 'Melissa', 'Tandon', 'm.tandon@example.com', '0922334355', '12 St, Blacksburg, Virginia', 'Student');
+
+-- Created by Aayan Khan 
+CREATE TABLE staff (
+    staff_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    role VARCHAR(50) NOT NULL -- librarian, admin, etc.
+);
+
+ALTER TABLE staff ADD phone_number VARCHAR(20);
+
+INSERT INTO staff (first_name, last_name, email, role, phone_number) 
+VALUES 
+('Alice', 'Johnson', 'alice.johnson@example.com', 'Librarian', '123-456-7890'),
+('Bob', 'Smith', 'bob.smith@example.com', 'Assistant', '234-567-8901'),
+('Charlie', 'Davis', 'charlie.davis@example.com', 'Manager', '345-678-9012'),
+('David', 'White', 'david.white@example.com', 'Librarian', '456-789-0123');
+
+-- Created by Leena (add inline comments) 
+CREATE TABLE borrowing_history (
+    borrow_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    staff_id INT,
+    borrow_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    due_date DATE NOT NULL,
+    return_date DATE DEFAULT NULL,
+    book_status VARCHAR(20) DEFAULT 'Borrowed',  -- Borrowed / Returned / Overdue
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (book_id) REFERENCES books(book_id) ON DELETE CASCADE,
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+);
+
+INSERT INTO borrowing_history (borrow_id, user_id, book_id, staff_id, borrow_date, due_date, return_date, book_status)
+VALUES 
+(1, 1, 1, 1, '2025-03-01', '2025-03-15', NULL, 'Borrowed'),
+(2, 2, 2, 1, '2025-02-20', '2025-02-27', '2025-02-27', 'Returned'),
+(3, 3, 3, 1, '2025-03-02', '2025-03-12', NULL, 'Borrowed'),
+(4, 1, 4, 1, '2025-03-05', '2025-03-19', NULL, 'Borrowed'),
+(5, 2, 5, 1, '2025-02-25', '2025-03-11', '2025-03-11', 'Returned'),
+(6, 1, 6, 1, '2025-02-28', '2025-03-07', NULL, 'Overdue'),
+(7, 2, 7, 1, '2025-03-01', '2025-03-11', NULL, 'Borrowed'),
+(8, 3, 8, 1, '2025-03-03', '2025-03-17', NULL, 'Borrowed'),
+(9, 1, 9, 1, '2025-02-15', '2025-03-01', '2025-03-01', 'Returned'),
+(10, 2, 10, 1, '2025-02-10', '2025-02-17', NULL, 'Overdue'),
+(11, 1, 11, 1, '2025-03-04', '2025-03-14', NULL, 'Borrowed'),
+(12, 2, 12, 1, '2025-02-18', '2025-03-04', '2025-03-04', 'Returned'),
+(13, 3, 13, 1, '2025-03-02', '2025-03-09', NULL, 'Borrowed'),
+(14, 1, 14, 1, '2025-03-01', '2025-03-15', NULL, 'Borrowed'),
+(15, 2, 15, 1, '2025-02-22', '2025-03-01', NULL, 'Overdue'),
+(16, 3, 16, 1, '2025-03-03', '2025-03-13', NULL, 'Borrowed');
+
+SELECT * FROM borrowing_history;
+
+-- Created by Rishika (add inline comments) 
+CREATE TABLE fines (
+    fine_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    borrow_id INT NOT NULL,
+    fine_amount DECIMAL(8,2) NOT NULL,
+    status VARCHAR(20) DEFAULT 'Unpaid', -- Paid / Unpaid
+    payment_date DATE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (borrow_id) REFERENCES borrowing_history(borrow_id)
+);
+
+INSERT INTO fines (user_id, borrow_id, fine_amount, status, payment_date)
+VALUES
+(1, 1, 5.00, 'Unpaid', NULL),
+(2, 2, 4.00, 'Unpaid', NULL);
+
+SELECT * FROM genres;
+
+-- Created by Aayan Khan 
+  CREATE TABLE reservations (
+    reservation_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    book_id INT NOT NULL,
+    reservation_date DATE DEFAULT NULL,
+    status VARCHAR(20) DEFAULT 'Pending', -- Pending, Cancelled, Completed
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (book_id) REFERENCES books(book_id)
+);
+ 
+INSERT INTO reservations (user_id, book_id, reservation_date, status)
+VALUES 
+(1, 1, '2024-03-01', 'Pending'),
+(2, 2, '2024-03-02', 'Completed');
+
+-- Created by Soumya (add inline comment) 
+CREATE TABLE digital_resources (
+    resource_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255),
+    resource_type VARCHAR(50), -- E-Book, Journal, Article, etc.
+    link TEXT NOT NULL
+);
+
+INSERT INTO digital_resources (resource_id, title, author, resource_type, link)
+VALUES 
+(1, 'The Alchemist (eBook)', 'Paulo Coelho', 'eBook', 'https://library.com/resources/the-alchemist-ebook'),
+(2, 'Chicken Soup for the Teenage Soul (PDF)', 'Harper Lee', 'PDF', 'https://library.com/resources/chicken-soup-pdf'),
+(3, 'The Silent Patient (Audiobook)', 'Alex Michaelides', 'Audiobook', 'https://library.com/resources/silent-patient-audio'),
+(4, 'Gone Girl (eBook)', 'Gillian Flynn', 'eBook', 'https://library.com/resources/gone-girl-ebook'),
+(5, 'Harry Potter and the Philosopher''s Stone (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp1-epub'),
+(6, 'Harry Potter and the Chamber of Secrets (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp2-epub'),
+(7, 'Harry Potter and the Prisoner of Azkaban (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp3-epub'),
+(8, 'Harry Potter and the Goblet of Fire (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp4-epub'),
+(9, 'Harry Potter and the Order of the Phoenix (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp5-epub'),
+(10, 'Harry Potter and the Half-Blood Prince (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp6-epub'),
+(11, 'Harry Potter and the Deathly Hallows (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp7-epub'),
+(12, 'The Lightning Thief (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy1-pdf'),
+(13, 'The Sea of Monsters (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy2-pdf'),
+(14, 'The Titan''s Curse (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy3-pdf'),
+(15, 'The Battle of the Labyrinth (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy4-pdf'),
+(16, 'The Last Olympian (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy5-pdf');
+
+-- Created by Senan 
+CREATE TABLE transactions (
+  transaction_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  transaction_date DATE NOT NULL,
+  user_id INT NOT NULL,
+  staff_id INT NOT NULL,
+  borrow_id INT NOT NULL,
+  max_loan_period INT DEFAULT 14, -- typically 14 days
+  FOREIGN KEY (user_id) REFERENCES users(user_id),
+  FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
+  FOREIGN KEY (borrow_id) REFERENCES borrowing_history(borrow_id)
+);
+
+SELECT * FROM transactions;
+
+INSERT INTO transactions (transaction_date, user_id, staff_id, borrow_id, max_loan_period)
+VALUES
+('2025-03-01', 1, 1, 1, 14),
+('2025-02-20', 2, 2, 2, 14),
+('2025-03-02', 3, 1, 3, 14),
+('2025-03-05', 1, 2, 4, 14),
+('2025-02-25', 2, 1, 5, 14),
+('2025-02-28', 1, 2, 6, 14),
+('2025-03-01', 2, 1, 7, 14),
+('2025-03-03', 3, 2, 8, 14),
+('2025-02-15', 1, 1, 9, 14),
+('2025-02-10', 2, 2, 10, 14),
+('2025-03-04', 1, 1, 11, 14),
+('2025-02-18', 2, 2, 12, 14),
+('2025-03-02', 3, 1, 13, 14),
+('2025-03-01', 1, 2, 14, 14),
+('2025-02-22', 2, 1, 15, 14),
+('2025-03-03', 3, 2, 16, 14);
+
+-- Created by Senan (add inline comments)
+CREATE TABLE book_copies (
+    copy_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    shelf_location VARCHAR(50),
+    barcode VARCHAR(50) UNIQUE,
+    status VARCHAR(20) DEFAULT 'Available', -- Available, Borrowed, Damaged
+    FOREIGN KEY (book_id) REFERENCES books(book_id)
+);
+  
+INSERT INTO book_copies (book_id, shelf_location, barcode, status)
+VALUES 
+(1, 'Shelf A1', 'BC0001', 'Available'),
+(2, 'Shelf A2', 'BC0002', 'Available'),
+(3, 'Shelf A1', 'BC0003', 'Available'),
+(4, 'Shelf A2', 'BC0004', 'Available'),
+(5, 'Shelf B1', 'BC0005', 'Available'),
+(6, 'Shelf B1', 'BC0006', 'Available'),
+(7, 'Shelf B2', 'BC0007', 'Available'),
+(8, 'Shelf B2', 'BC0008', 'Available'),
+(9, 'Shelf C1', 'BC0009', 'Available'),
+(10, 'Shelf C1', 'BC0010', 'Available'),
+(11, 'Shelf C2', 'BC0011', 'Available'),
+(12, 'Shelf D1', 'BC0012', 'Available'),
+(13, 'Shelf D1', 'BC0013', 'Available'),
+(14, 'Shelf D2', 'BC0014', 'Available'),
+(15, 'Shelf D2', 'BC0015', 'Available'),
+(16, 'Shelf D3', 'BC0016', 'Available');
+
+-- Created by Aayan Khan  
+CREATE TABLE book_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255),
+    request_date DATE NOT NULL,
+    status VARCHAR(20) DEFAULT 'Pending', -- Pending, Approved, Rejected
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+INSERT INTO book_requests (user_id, title, author, request_date, status)
+VALUES
+(1, 'The Catcher in the Rye', 'J.D. Salinger', '2024-03-01', 'Pending'),
+(2, 'To Kill a Mockingbird', 'Harper Lee', '2024-03-02', 'Approved');
+
+-- Created by Rishika (add inline comments) 
+CREATE TABLE book_reviews (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating INT CHECK (rating BETWEEN 1 AND 5),
+    review_text TEXT,
+    review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES books(book_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+INSERT INTO book_reviews (book_id, user_id, review_text, rating)
+VALUES
+    (1, 1, 'Great book! Highly recommend it to anyone interested in history.', 5),
+    (2, 2, 'The plot was a bit slow, but the characters were well-developed.', 4);
+  
+-- Created by Rishika (add inline comments) 
+CREATE TABLE library_feedback (
+    feedback_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    feedback_text TEXT NOT NULL,
+    feedback_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+INSERT INTO library_feedback (user_id, feedback_text)
+VALUES
+(1, 'A captivating library experience. The resources were easy to access, and the staff was very helpful.'),
+(2, 'The library had a good collection, but finding specific resources could be made easier.');
+
+-- Created by  
+CREATE TABLE review_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    review_id INT,
+    log_action VARCHAR(50),
+    log_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Complex Query 1: Borrowing Summary Per User
+SELECT 
+    u.User_Id,
+    u.First_Name,
+    u.Last_Name,
+    u.Email,
+    u.Membership_Date,
+    COUNT(bh.Borrow_Id) AS Total_Books_Borrowed,
+    MAX(bh.Borrow_Date) AS Last_Borrowed_Date
+FROM users u
+LEFT JOIN borrowing_history bh ON u.User_Id = bh.User_Id
+GROUP BY 
+    u.User_Id, u.First_Name, u.Last_Name, u.Email, u.Membership_Date
+ORDER BY Last_Borrowed_Date DESC;
+
+-- Complex Query 2: Active Users with Pending Reservations and Total Fines
+SELECT 
+    u.User_Id,
+    u.First_Name,
+    u.Last_Name,
+    u.Email,
+    COUNT(DISTINCT r.Reservation_Id) AS Pending_Reservations,
+    SUM(f.Fine_Amount) AS Total_Fines,
+    MAX(CASE WHEN f.status = 'Unpaid' THEN 'Yes' ELSE 'No' END) AS Has_Unpaid_Fines
+FROM users u
+LEFT JOIN reservations r 
+    ON u.User_Id = r.User_Id AND r.status = 'Pending'
+LEFT JOIN fines f 
+    ON u.User_Id = f.User_Id
+GROUP BY u.User_Id, u.First_Name, u.Last_Name, u.Email
+HAVING Pending_Reservations > 0
+ORDER BY Total_Fines DESC;
+
+-- Complex Query 3: Retrieve all transactions with user and staff details
+SELECT Transactions.Transaction_ID, Transactions.Transaction_Date, Users.User_ID, Staff.Staff_ID, Transactions.Transaction_id, Book_Copies.copy_id, Genres.genre_id
+FROM Transactions
+JOIN Users ON Transactions.User_ID = Users.User_ID
+JOIN Staff ON Transactions.Staff_ID = Staff.Staff_ID
+LEFT JOIN Book_Copies ON Transactions.Book_ID = Book_Copies.Book_ID
+LEFT JOIN Genres ON Book_Copies.Genre_ID = Genres.Genre_ID;
+
+-- Complex Query 4: List all book copies along with their genres and publishers
+SELECT Book_Copies.Copy_ID, Book_Copies.Copy_Number, Book_Copies.Title, Book_Copies.Author_Name, Genre_Categories.Genre_Title, Publishers.Publisher_ID
+FROM Book_Copies
+JOIN Genre_Categories ON Book_Copies.Genre_ID = Genre_Categories.Genre_ID
+JOIN Publishers ON Book_Copies.Publisher_ID = Publishers.Publisher_Id;
+
+-- Complex Query 5
+-- Created by Aayan Khan/This SQL query retrieves reservation details, including user information, book title, reservation date, status,
+-- and the total number of reservations per user. 
+-- It uses joins, a subquery, filtering, and sorting to efficiently fetch and structure the data.
+ 
+SELECT r.Reservation_Id, u.First_Name, u.Last_Name, u.Email, 
+       b.Title AS Book_Title, r.Reservation_Date, r.Reservation_Status, 
+       ur.Total_User_Reservations
+FROM reservations r
+JOIN users u ON r.User_Id = u.User_Id
+JOIN books b ON r.Book_Id = b.Book_Id
+JOIN (SELECT User_Id, COUNT(*) AS Total_User_Reservations 
+
+      FROM reservations GROUP BY User_Id) ur 
+ON r.User_Id = ur.User_Id
+WHERE r.Reservation_Status IN ('Pending', 'Completed')
+ORDER BY r.Reservation_Date DESC;
+
+-- Complex Query 6
+-- Created by Aayan Khan/ This query retrieves each user's book request history, including the total requests, pending requests, approved requests, rejected requests, 
+-- and the latest request date.
+
+SELECT 
+    u.User_Id,
+    u.First_Name,
+    u.Last_Name,
+    COUNT(br.Request_Id) AS Total_Requests,
+    SUM(CASE WHEN br.Request_Status = 'Pending' THEN 1 ELSE 0 END) AS Pending_Requests,
+    SUM(CASE WHEN br.Request_Status = 'Approved' THEN 1 ELSE 0 END) AS Approved_Requests,
+    SUM(CASE WHEN br.Request_Status = 'Rejected' THEN 1 ELSE 0 END) AS Rejected_Requests,
+    MAX(br.Request_Date) AS Request_Date
+FROM book_requests br
+JOIN users u ON br.User_Id = u.User_Id
+GROUP BY u.User_Id, u.First_Name, u.Last_Name
+HAVING COUNT(br.Request_Id) > 0;
+
+-- Complex Query 7 Find overdue books 
+
+SELECT 
+	b.book_id, 
+    b.title, 
+    u.user_id, 
+    u.first_name, 
+    br.due_date
+FROM borrowing_history br
+JOIN books b ON br.book_id = b.book_id
+JOIN users u ON br.user_id = u.user_id
+WHERE br.return_date IS NULL AND br.due_date < CURRENT_DATE;
+
+-- Complex Query 8 Find the most borrowed books
+
+SELECT 
+	b.book_id, 
+    b.title, 
+    b.author_id, 
+    COUNT(*) AS borrow_count
+FROM borrowing_history br
+JOIN books b ON br.book_id = b.book_id
+GROUP BY b.book_id, b.title, b.author_id
+ORDER BY borrow_count DESC
+LIMIT 10;
+
+-- Complex Query 9 Find Books That Have Only Received 4-Star or Higher Reviews
+
+SELECT b.title, MIN(r.rating) AS lowest_rating
+FROM books b
+JOIN library_reviews r ON b.book_id = r.book_id
+GROUP BY b.book_id
+HAVING lowest_rating >= 4;
+
+-- Complex Query 10 Find the Books with the Highest Average Feedback Rating
+
+SELECT b.title, AVG(lf.rating) AS avg_feedback_rating
+FROM books b
+JOIN library_feedback lf ON b.book_id = lf.book_id
+GROUP BY b.book_id
+ORDER BY avg_feedback_rating DESC
+LIMIT 1;
+
+-- Created by Leena
+DELIMITER //
+
+CREATE PROCEDURE AddBorrowingRecord (
+    IN p_userId INT,
+    IN p_bookId INT,
+    IN p_borrowDate DATE
+)
+BEGIN
+    INSERT INTO borrowing_history (User_Id, Book_Id, Borrow_Date)
+    VALUES (p_userId, p_bookId, p_borrowDate);
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE UpdateTransactionStatus;
+-- Stored Procedure to update transacted item as closed where book status is returned
+-- in borrowed books table
+-- DELIMITER //
+-- CREATE PROCEDURE UpdateTransactionStatus()
+-- BEGIN
+--     UPDATE transactions t
+--     JOIN borrowing_history bh ON t.Borrow_Id = bh.Borrow_Id
+--     SET t.Transaction_Status = 'Closed'
+--     WHERE bh.Book_Status = 'Returned';
+-- END //
+-- DELIMITER ;
+
+-- CALL UpdateTransactionStatus();
+
+-- Created by Aayan Khan
+-- retrieve all books borrowed by a specific user with basic info.
+DELIMITER $$
+
+CREATE PROCEDURE GetUserBorrowedBooks(
+    IN in_user_id INT
+)
+BEGIN
+    SELECT 
+        bh.Borrow_Id,
+        b.Title,
+        bh.Borrow_Date,
+        bh.Due_Date,
+        bh.Return_Date,
+        bh.Book_Status
+    FROM borrowing_history bh
+    JOIN books b ON bh.Book_Id = b.Book_Id
+    WHERE bh.User_Id = in_user_id;
+END$$
+
+DELIMITER ;
+
+CALL GetUserBorrowedBooks(1);
+
+-- Created by
+DELIMITER //
+
+CREATE PROCEDURE AddBookReview (
+    IN p_book_id INT,
+    IN p_user_id INT,
+    IN p_review_text TEXT,
+    IN p_rating INT
+)
+BEGIN
+    DECLARE book_exists INT;
+    DECLARE user_exists INT;
+
+    -- Check if the book exists
+    SELECT COUNT(*) INTO book_exists FROM books WHERE book_id = p_book_id;
+    -- Check if the user exists
+    SELECT COUNT(*) INTO user_exists FROM users WHERE user_id = p_user_id;
+
+    IF book_exists = 1 AND user_exists = 1 THEN
+        INSERT INTO book_reviews (book_id, user_id, review_text, rating)
+        VALUES (p_book_id, p_user_id, p_review_text, p_rating);
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid book_id or user_id';
+    END IF;
+END //
+
+DELIMITER ;
+
+-- Created by Leena
+DELIMITER //
+
+CREATE FUNCTION GetTotalFines(userId INT)
+RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+    DECLARE total DECIMAL(10,2);
+    
+    SELECT IFNULL(SUM(Fine_Amount), 0) 
+    INTO total
+    FROM fines
+    WHERE User_Id = userId;
+    
+    RETURN total;
+END //
+
+DELIMITER ;
+
+-- Stored Function to find most transacted item (Created by Senan)
+DELIMITER $$
+
+CREATE FUNCTION GetMostTransactedBook()
+RETURNS VARCHAR(255)
+DETERMINISTIC
+BEGIN
+    DECLARE v_Book_Title VARCHAR(255);
+
+    SELECT b.Title INTO v_Book_Title
+    FROM books b
+    JOIN (
+        SELECT Book_ID
+        FROM transactions
+        GROUP BY Book_ID
+        ORDER BY COUNT(*) DESC
+        LIMIT 1
+    ) AS t
+    ON b.Book_Id = t.Book_ID;
+
+    RETURN v_Book_Title;
+END$$
+
+DELIMITER ;
+
+SELECT GetMostTransactedBook() AS Most_Popular_Book;
+
+-- Created by Aayan Khan
+-- This stored function returns a combined string that includes both the user's full name and their total unpaid fine
+-- Take a User_Id as input.
+-- Look up the user’s full name from the users table.
+-- Calculate the total unpaid fine from the fines table. 
+
+DELIMITER $$
+
+CREATE FUNCTION GetUserFineDetails(in_user_id INT)
+RETURNS VARCHAR(255)
+DETERMINISTIC
+BEGIN
+    DECLARE total_fine DECIMAL(10,2) DEFAULT 0.00;
+    DECLARE full_name VARCHAR(100);
+
+    -- Get total unpaid fine
+    SELECT SUM(Fine_Amount)
+    INTO total_fine
+    FROM fines
+    WHERE User_Id = in_user_id AND Fine_Status = 'Unpaid';
+
+    -- If no fines exist, default to 0
+    IF total_fine IS NULL THEN
+        SET total_fine = 0.00;
+    END IF;
+
+    -- Get full name of the user
+    SELECT CONCAT(First_Name, ' ', Last_Name)
+    INTO full_name
+    FROM users
+    WHERE User_Id = in_user_id;
+
+    -- Return combined result
+    RETURN CONCAT(full_name, ' - Total Fine: $', FORMAT(total_fine, 2));
+END$$
+
+DELIMITER ;
+
+SELECT GetUserFineDetails(2);
+SELECT 
+    User_Id,
+    GetUserFineDetails(User_Id) AS UserFineInfo
+FROM users;
+
+-- Created by
+DELIMITER $$
+
+CREATE FUNCTION IsBookReservable(p_book_id INT)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    DECLARE available INT;
+
+    -- Get available copies
+    SELECT available_copies INTO available
+    FROM books
+    WHERE book_id = p_book_id;
+
+    -- If no copies available, return TRUE (can be reserved)
+    RETURN available = 0;
+END$$
+
+DELIMITER ; 
+
+-- Created by 
+DELIMITER //
+
+CREATE FUNCTION GetAverageRating(p_book_id INT)
+RETURNS DECIMAL(3,2)
+DETERMINISTIC
+BEGIN
+    DECLARE avg_rating DECIMAL(3,2);
+
+    SELECT AVG(rating) INTO avg_rating
+    FROM library_reviews
+    WHERE book_id = p_book_id;
+
+    RETURN IFNULL(avg_rating, 0.0);
+END //
+
+DELIMITER ;
+
+-- Created by
+DELIMITER //
+
+CREATE FUNCTION GetUserOverdueCount(p_user_id INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE overdue_count INT;
+
+    SELECT COUNT(*) INTO overdue_count
+    FROM borrowing_history
+    WHERE User_Id = p_user_id
+      AND Book_Status = 'Borrowed'
+      AND Due_Date < CURDATE();
+
+    RETURN overdue_count;
+END //
+
+DELIMITER ;
+
+SELECT 
+    u.User_Id,
+    u.First_Name,
+    u.Last_Name,
+    GetUserOverdueCount(u.User_Id) AS OverdueBooks
+FROM users u;
+
+SELECT GetUserOverdueCount(1) AS OverdueBooks;
+
+-- Created by Leena 
+DELIMITER //
+
+CREATE TRIGGER UpdateFineStatus
+AFTER UPDATE ON fines
+FOR EACH ROW
+BEGIN
+    IF NEW.fine_amount <= 0 AND NEW.status != 'Paid' THEN
+        UPDATE fines
+        SET status = 'Paid'
+        WHERE fine_id = NEW.fine_id;
+    END IF;
+END //
+
+DELIMITER ;
+
+-- Created by Aayan Khan
+-- This trigger automatically inserts a fine when a book is returned late in the borrowing_history table.
+-- Table: borrowing_history
+-- Event: AFTER UPDATE
+-- Condition: When Return_Date is set, and it's later than Due_Date
+-- Action: Insert a record into fines with calculated fine amount.
+DELIMITER $$
+
+CREATE TRIGGER AddFineOnLateReturn
+AFTER UPDATE ON borrowing_history
+FOR EACH ROW
+BEGIN
+    DECLARE fine_days INT;
+    DECLARE fine_amount DECIMAL(10,2);
+
+    -- Check if Return_Date is updated and is after Due_Date
+    IF NEW.Return_Date IS NOT NULL AND NEW.Return_Date > NEW.Due_Date THEN
+        SET fine_days = DATEDIFF(NEW.Return_Date, NEW.Due_Date);
+        SET fine_amount = fine_days * 1.00;
+
+        -- Insert the fine record
+        INSERT INTO fines(User_Id, Book_Id, Due_Date, Return_Date, Fine_Amount, Fine_Status)
+        VALUES(NEW.User_Id, NEW.Book_Id, NEW.Due_Date, NEW.Return_Date, fine_amount, 'Unpaid');
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- Created by
+DELIMITER //
+
+CREATE TRIGGER RestoreStock
+AFTER UPDATE ON borrowing_history
+FOR EACH ROW
+BEGIN
+    -- Check if the return_date was previously NULL and is now updated (i.e., book is just returned)
+    IF OLD.return_date IS NULL AND NEW.return_date IS NOT NULL THEN
+        -- Increase the available copies in the books table
+        UPDATE books
+        SET available_copies = available_copies + 1
+        WHERE book_id = NEW.book_id;
+    END IF;
+END//
+
+DELIMITER ;
+
+-- Created by 
+DELIMITER //
+
+CREATE TRIGGER AfterReviewInsert
+AFTER INSERT ON book_reviews
+FOR EACH ROW
+BEGIN
+    INSERT INTO review_logs (review_id, log_action)
+    VALUES (NEW.review_id, 'Review Added');
+END //
+
+DELIMITER ;
