@@ -347,7 +347,10 @@ CREATE TABLE review_logs (
     log_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Complex Query 1: Borrowing Summary Per User
+-- Complex Query 1 Created by Leena Hussein: Borrowing Summary Per User
+-- This query lists all users, including those who haven’t borrowed any books (because of LEFT JOIN).
+-- It calculates the total number of books each user has borrowed and the most recent borrow date.
+-- Users are sorted so that those with the most recent borrow activity appear first.
 SELECT 
     u.User_Id,
     u.First_Name,
@@ -362,7 +365,10 @@ GROUP BY
     u.User_Id, u.First_Name, u.Last_Name, u.Email, u.Membership_Date
 ORDER BY Last_Borrowed_Date DESC;
 
--- Complex Query 2: Active Users with Pending Reservations and Total Fines
+-- Complex Query 2 Created by Leena: Active Users with Pending Reservations and Total Fines
+-- Shows only users with at least one pending reservation.
+-- Also calculates total fines and flags if any fine is unpaid.
+-- Users are sorted by their total fines in descending order.
 SELECT 
     u.User_Id,
     u.First_Name,
@@ -474,6 +480,8 @@ ORDER BY avg_feedback_rating DESC
 LIMIT 1;
 
 -- Created by Leena
+-- This procedure allows you to add a new record to the borrowing_history table by supplying the user ID, book ID, and borrow date.
+-- Useful for encapsulating business logic and reducing repetitive insert code.
 DELIMITER //
 
 CREATE PROCEDURE AddBorrowingRecord (
@@ -712,7 +720,9 @@ FROM users u;
 
 SELECT GetUserOverdueCount(1) AS OverdueBooks;
 
--- Created by Leena 
+-- Created by Leena
+-- This trigger automatically updates the status of a fine to 'Paid' if its amount is reduced to 0 or less after an update. 
+-- It ensures consistency between the fine_amount and status fields.
 DELIMITER //
 
 CREATE TRIGGER UpdateFineStatus
