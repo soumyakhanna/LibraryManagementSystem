@@ -49,7 +49,7 @@ INSERT INTO publishers (publisher_id, publisher_name, email, website) VALUES
 ('6', 'Disney Hyperion', 'contact@disneybooks.com', 'https://www.disneybooks.com');
 
 -- Created by Senan
--- 
+-- This table has a one to many relationship where books can be referenced by their genre
 CREATE TABLE genres (
     genre_id INT AUTO_INCREMENT PRIMARY KEY,
     genre_name VARCHAR(100) NOT NULL
@@ -249,7 +249,7 @@ VALUES
 (20, 'The Fault in Our Stars (ePub)', 10, 10, 1, 'https://library.com/resources/fault-stars-epub', 'Online');
 
 -- Created by Senan 
--- 
+-- This table keeps records of all transactions for example borrowing of a book
 CREATE TABLE transactions (
   transaction_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   transaction_date DATE NOT NULL,
@@ -284,7 +284,7 @@ VALUES
 ('2025-03-03', 3, 2, 16, 14);
 
 -- Created by Senan
--- 
+--  This table keeps record of all book copies of each book that are present in the library and their location as well
 CREATE TABLE book_copies (
     copy_id INT AUTO_INCREMENT PRIMARY KEY,
     book_id INT NOT NULL,
@@ -412,6 +412,7 @@ HAVING Pending_Reservations > 0
 ORDER BY Total_Fines DESC;
 
 -- Complex Query 3 Created by Senan: Retrieve all transactions with user and staff details
+-- This query returns all transaction details along with who made the transaction and authorized it
 SELECT 
     t.transaction_id, 
     t.transaction_date, 
@@ -427,6 +428,7 @@ LEFT JOIN book_copies bc ON bh.book_id = bc.book_id
 LEFT JOIN books b ON bc.book_id = b.book_id;
 
 -- Complex Query 4 Created by Senan: List all book copies along with their genres and publishers
+-- Gives a comprehensive list of all book copies with their genres and punlishers
 SELECT 
     bc.copy_id,
     b.title AS book_title,
@@ -599,20 +601,25 @@ SELECT * FROM fines;
 CALL PayFine(1);
 SELECT * FROM fines;
 
-DROP PROCEDURE UpdateTransactionStatus;
--- Stored Procedure to update transacted item as closed where book status is returned
--- in borrowed books table
--- DELIMITER //
--- CREATE PROCEDURE UpdateTransactionStatus()
--- BEGIN
---     UPDATE transactions t
---     JOIN borrowing_history bh ON t.Borrow_Id = bh.Borrow_Id
---     SET t.Transaction_Status = 'Closed'
---     WHERE bh.Book_Status = 'Returned';
--- END //
--- DELIMITER ;
-
--- CALL UpdateTransactionStatus();
+-- Created by Senan
+-- This procedure adds a book copy when a new book copy is added to the library
+CREATE PROCEDURE AddBookCopy (
+    IN in_book_id INT,
+    IN in_new_copies INT
+)
+BEGIN
+    -- Check if the book exists
+    IF EXISTS (SELECT 1 FROM books WHERE book_id = in_book_id) THEN
+        -- Update the total and available copies
+        UPDATE books
+        SET total_copies = total_copies + in_new_copies,
+            available_copies = available_copies + in_new_copies
+        WHERE book_id = in_book_id;
+    ELSE
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Book ID not found in the database.';
+    END IF;
+END $$
 
 -- Created by Aayan Khan
 -- retrieve all books borrowed by a specific user with basic info.
@@ -689,33 +696,29 @@ END //
 DELIMITER;
 
 -- Created by Senan
--- Stored Function to find most transacted item
+-- Stored Function to find available copies of a certain book
+-- Looks up book copies with book ID as the refrence
 DELIMITER $$
 
-CREATE FUNCTION GetMostTransactedBook()
-RETURNS VARCHAR(255)
+CREATE FUNCTION GetAvailableCopies(in_book_id INT)
+RETURNS INT
 DETERMINISTIC
+READS SQL DATA
 BEGIN
-    DECLARE v_Book_Title VARCHAR(255);
+    DECLARE available INT;
 
-    -- Find the most transacted book title
-    SELECT b.title INTO v_Book_Title
-    FROM books b
-    JOIN (
-        SELECT bh.book_id
-        FROM transactions t
-        JOIN borrowing_history bh ON t.borrow_id = bh.borrow_id
-        GROUP BY bh.book_id
-        ORDER BY COUNT(*) DESC
-        LIMIT 1
-    ) AS top_book
-    ON b.book_id = top_book.book_id;
+    -- Get the number of available copies for the book
+    SELECT available_copies INTO available
+    FROM books
+    WHERE book_id = in_book_id;
 
-    RETURN v_Book_Title;
-END$$
+    -- Return the result
+    RETURN available;
+END $$
 
 DELIMITER ;
-SELECT GetMostTransactedBook() AS Most_Popular_Book;
+
+SELECT GetAvailableCopies(5);
 
 -- Created by Aayan Khan
 -- This stored function returns a combined string that includes both the user's full name and their total unpaid fine
@@ -914,7 +917,8 @@ END //
 
 DELIMITER ;
 
--- Created by 
+-- Created by Senan
+-- reduces number of available copies after a book is borrowed
 DELIMITER //
 
 CREATE TRIGGER after_issue_book_reduce_stock
