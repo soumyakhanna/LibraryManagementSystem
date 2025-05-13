@@ -46,7 +46,11 @@ INSERT INTO publishers (publisher_id, publisher_name, email, website) VALUES
 ('3', 'Celadon Books', 'info@celadonbooks.com', 'https://celadonbooks.com'),
 ('4', 'Crown Publishing Group', 'contact@crownpublishing.com', 'https://crownpublishing.com'),
 ('5', 'Bloomsbury', 'info@bloomsbury.com', 'https://www.bloomsbury.com'),
-('6', 'Disney Hyperion', 'contact@disneybooks.com', 'https://www.disneybooks.com');
+('6', 'Disney Hyperion', 'contact@disneybooks.com', 'https://www.disneybooks.com'),
+(7, 'Atria Books', 'contact@atria.com', 'https://www.simonandschuster.com/imprints/atria'),
+(8, 'Secker & Warburg', 'info@seckerwarburg.com', 'https://www.penguin.co.uk'),
+(9, 'Riverhead Books', 'contact@riverhead.com', 'https://www.riverheadbooks.com'),
+(10, 'Dutton Books', 'info@duttonbooks.com', 'https://www.penguinrandomhouse.com/imprints/dutton');
 
 -- Created by Senan
 -- This table has a one to many relationship where books can be referenced by their genre
@@ -231,7 +235,7 @@ VALUES
 (2, 'Chicken Soup for the Teenage Soul (PDF)', 'Harper Lee', 'PDF', 'https://library.com/resources/chicken-soup-pdf'),
 (3, 'The Silent Patient (Audiobook)', 'Alex Michaelides', 'Audiobook', 'https://library.com/resources/silent-patient-audio'),
 (4, 'Gone Girl (eBook)', 'Gillian Flynn', 'eBook', 'https://library.com/resources/gone-girl-ebook'),
-(5, 'Harry Potter and the Philosopher''s Stone (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp1-epub'),
+(5, 'Harry Potter and the Philosopher\'s Stone (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp1-epub'),
 (6, 'Harry Potter and the Chamber of Secrets (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp2-epub'),
 (7, 'Harry Potter and the Prisoner of Azkaban (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp3-epub'),
 (8, 'Harry Potter and the Goblet of Fire (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp4-epub'),
@@ -240,13 +244,13 @@ VALUES
 (11, 'Harry Potter and the Deathly Hallows (ePub)', 'J.K. Rowling', 'ePub', 'https://library.com/resources/hp7-epub'),
 (12, 'The Lightning Thief (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy1-pdf'),
 (13, 'The Sea of Monsters (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy2-pdf'),
-(14, 'The Titan''s Curse (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy3-pdf'),
+(14, 'The Titan\'s Curse (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy3-pdf'),
 (15, 'The Battle of the Labyrinth (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy4-pdf'),
 (16, 'The Last Olympian (PDF)', 'Rick Riordan', 'PDF', 'https://library.com/resources/percy5-pdf'),
-(17, 'It Ends with Us (eBook)', 7, 7, 1, 'https://library.com/resources/itendswithus-ebook', 'Online'),
-(18, '1984 (PDF)', 8, 8, 3, 'https://library.com/resources/1984-pdf', 'Downloadable'),
-(19, 'The Kite Runner (Audiobook)', 9, 9, 2, 'https://library.com/resources/kiterunner-audio', 'Online'),
-(20, 'The Fault in Our Stars (ePub)', 10, 10, 1, 'https://library.com/resources/fault-stars-epub', 'Online');
+(17, 'It Ends with Us (eBook)', 'Colleen Hoover', 'eBook', 'https://library.com/resources/itendswithus-ebook'),
+(18, '1984 (PDF)', 'George Orwell', 'PDF', 'https://library.com/resources/1984-pdf'),
+(19, 'The Kite Runner (Audiobook)', 'Khaled Hosseini', 'Audiobook', 'https://library.com/resources/kiterunner-audio'),
+(20, 'The Fault in Our Stars (ePub)', 'John Green', 'ePub', 'https://library.com/resources/fault-stars-epub');
 
 -- Created by Senan 
 -- This table keeps records of all transactions for example borrowing of a book
