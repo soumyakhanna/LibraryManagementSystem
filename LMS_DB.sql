@@ -32,7 +32,6 @@ VALUES
 (16, 'John Green', 'American author known for young adult fiction');
 
 -- Created by Leena
---  
 CREATE TABLE publishers (
     publisher_id INT AUTO_INCREMENT PRIMARY KEY,
     publisher_name VARCHAR(255) NOT NULL,
@@ -64,6 +63,7 @@ INSERT INTO genres (genre_name) VALUES
 ('Thriller'),
 ('Biography'),
 ('Fantasy');
+
 
 -- Created by Soumya Khanna
 -- Table to store book details including title, author, publisher, genre, and inventory counts.
@@ -107,7 +107,6 @@ VALUES
 (20, 'The Fault in Our Stars', 10, 10, 1, 1, 6, 6);
 
 -- Created by Leena
--- 
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -127,7 +126,6 @@ VALUES
 ('3', 'Melissa', 'Tandon', 'm.tandon@example.com', '0922334355', '12 St, Blacksburg, Virginia', 'Student');
 
 -- Created by Aayan Khan 
--- 
 CREATE TABLE staff (
     staff_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -146,7 +144,6 @@ VALUES
 ('David', 'White', 'david.white@example.com', 'Librarian', '456-789-0123');
 
 -- Created by Leena 
--- 
 CREATE TABLE borrowing_history (
     borrow_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -183,7 +180,6 @@ VALUES
 -- SELECT * FROM borrowing_history;
 
 -- Created by Rishika
---  
 CREATE TABLE fines (
     fine_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -203,7 +199,6 @@ VALUES
 -- SELECT * FROM genres;
 
 -- Created by Aayan Khan 
--- 
   CREATE TABLE reservations (
     reservation_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -318,7 +313,6 @@ VALUES
 (16, 'Shelf D3', 'BC0016', 'Available');
 
 -- Created by Aayan Khan  
--- 
 CREATE TABLE book_requests (
     request_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -335,7 +329,6 @@ VALUES
 (2, 'To Kill a Mockingbird', 'Harper Lee', '2024-03-02', 'Approved');
 
 -- Created by Rishika
--- 
 CREATE TABLE book_reviews (
     review_id INT AUTO_INCREMENT PRIMARY KEY,
     book_id INT NOT NULL,
@@ -353,7 +346,6 @@ VALUES
     (2, 2, 'The plot was a bit slow, but the characters were well-developed.', 4);
   
 -- Created by Rishika 
--- 
 CREATE TABLE library_feedback (
     feedback_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -367,8 +359,7 @@ VALUES
 (1, 'A captivating library experience. The resources were easy to access, and the staff was very helpful.'),
 (2, 'The library had a good collection, but finding specific resources could be made easier.');
 
--- Created by  
--- 
+-- Created by Rishika
 CREATE TABLE review_logs (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
     review_id INT,
@@ -567,8 +558,8 @@ SELECT * FROM borrowing_history;
 SELECT * FROM books;
 
 -- Created by Soumya 
-
--- DROP PROCEDURE ReturnBook;
+-- Return book is a stored procedure to alter the book status to returned any time a reader returns the book
+-- This helps in keeping track of borrowed books and late fines. 
 
 DELIMITER //
 
@@ -584,9 +575,9 @@ END //
 
 DELIMITER;
 
+SELECT * FROM borrowing_history;
 CALL ReturnBook(1);
 
--- 
 DELIMITER //
 
 CREATE PROCEDURE PayFine(
@@ -641,7 +632,7 @@ BEGIN
         bh.Return_Date,
         bh.Book_Status
     FROM borrowing_history bh
-    JOIN books b ON bh.Book_Id = b.Book_Id
+    JOIN books b ON bh.book_id = b.book_id
     WHERE bh.User_Id = in_user_id;
 END$$
 
@@ -649,7 +640,7 @@ DELIMITER;
 
 CALL GetUserBorrowedBooks(1);
 
--- Created by
+-- Created by Rishika
 DELIMITER //
 
 CREATE PROCEDURE AddBookReview (
@@ -768,7 +759,9 @@ SELECT
     GetUserFineDetails(User_Id) AS UserFineInfo
 FROM users;
 
--- Created by
+-- Created by Soumya
+-- This stored function checks whether there are any available copies present in the library.
+-- It is a quick check for the staff before readers start the reserving process. 
 -- DROP FUNCTION IsBookReservable;
 DELIMITER $$
 
@@ -795,7 +788,7 @@ DELIMITER ;
 SELECT * FROM books;
 SELECT IsBookReservable(1);
 
--- Created by 
+-- Created by Rishika
 -- DROP FUNCTION GetAverageRating;
 DELIMITER //
 
@@ -883,16 +876,15 @@ BEGIN
         SET fine_amount = fine_days * 1.00;
 
         -- Insert the fine record
-        INSERT INTO fines(User_Id, Book_Id, Due_Date, Return_Date, Fine_Amount, Fine_Status)
-        VALUES(NEW.User_Id, NEW.Book_Id, NEW.Due_Date, NEW.Return_Date, fine_amount, 'Unpaid');
+        INSERT INTO fines(User_Id, book_id, Due_Date, Return_Date, Fine_Amount, Fine_Status)
+        VALUES(NEW.User_Id, NEW.book_id, NEW.Due_Date, NEW.Return_Date, fine_amount, 'Unpaid');
     END IF;
 END$$
 
 DELIMITER ;
 
--- Created by
--- DROP TRIGGER after_return_book_restore_stock;
-
+-- Created by Soumya
+-- This trigger automatically restores stock after a book is returned
 DELIMITER //
 
 CREATE TRIGGER after_return_book_restore_stock
@@ -908,7 +900,7 @@ END //
 
 DELIMITER ;
 
--- Created by 
+-- Created by Rishika
 DELIMITER //
 
 CREATE TRIGGER after_review_insert
