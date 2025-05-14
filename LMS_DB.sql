@@ -62,7 +62,21 @@ INSERT INTO genres (genre_name) VALUES
 ('Crime'),
 ('Thriller'),
 ('Biography'),
-('Fantasy');
+('Fantasy'),
+('Science Fiction'),
+('Romance'),
+('Mystery'),
+('Historical Fiction'),
+('Horror'),
+('Non-Fiction'),
+('Adventure'),
+('Drama'),
+('Poetry'),
+('Self-Help'),
+('Philosophy'),
+('Psychology'),
+('Children'),
+('Young Adult');
 
 
 -- Created by Soumya Khanna
@@ -123,7 +137,16 @@ INSERT INTO users
 VALUES 
 ('1', 'Liya', 'Alemu', 'liya.alemu@example.com', '0911223344', '123 Addis Ababa, Ethiopia', 'Student'),
 ('2', 'Daniel', 'Tesfaye', 'daniel.tesfaye@example.com', '0922334455', '456 Bahir Dar, Ethiopia', 'Faculty'),
-('3', 'Melissa', 'Tandon', 'm.tandon@example.com', '0922334355', '12 St, Blacksburg, Virginia', 'Student');
+('3', 'Melissa', 'Tandon', 'm.tandon@example.com', '0922334355', '12 St, Blacksburg, Virginia', 'Student'),
+('4', 'Sophia', 'Nguyen', 'sophia.nguyen@univ.edu', '0913456789', '789 New York, USA', 'Student'),
+('5', 'Jacob', 'Smith', 'jacob.smith@univ.edu', '0921234567', '234 Austin, Texas, USA', 'Student'),
+('6', 'Emily', 'Wong', 'emily.wong@college.edu', '0912345678', '567 San Francisco, USA', 'Faculty'),
+('8', 'Aisha', 'Khan', 'aisha.khan@school.edu', '0923344556', '321 Seattle, Washington, USA', 'Student'),
+('10', 'Fatima', 'Ali', 'fatima.ali@institute.edu', '0921122334', '789 Karachi, Pakistan', 'Faculty'),
+('11', 'Ethan', 'Martinez', 'ethan.martinez@campus.edu', '0919887766', '876 Los Angeles, USA', 'Student'),
+('13', 'Henry', 'Wilson', 'henry.wilson@univ.edu', '0923345678', '432 London, UK', 'Student'),
+('14', 'Natalie', 'Garcia', 'natalie.garcia@college.edu', '0917654321', '345 Toronto, Canada', 'Faculty'),
+('15', 'David', 'Kim', 'david.kim@school.edu', '0919988776', '567 Seoul, South Korea', 'Student');
 
 -- Created by Aayan Khan 
 CREATE TABLE staff (
